@@ -4,6 +4,7 @@ import scala.util.Random
 
 object Streams extends App {
   import Lists._
+  import Optionals.Option._
   sealed trait Stream[A]
 
   object Stream {
@@ -58,6 +59,23 @@ object Streams extends App {
 
     def generate[A](next: => A): Stream[A] = cons(next, generate(next))
 
+    /*
+    my methods for power iterator
+     */
+    def fromList[A](list: List[A]): Stream[A] = list match {
+      case List.Cons(h,t) => Stream.cons(h, fromList(t))
+      case _ => Stream.empty()
+    }
+
+    def first[A](stream: Stream[A]): Optionals.Option[A] = stream match{
+      case Cons(h, _) => Optionals.Option.of(h())
+      case _ => Optionals.Option.empty
+    }
+
+    def tail[A](stream: Stream[A]): Stream[A] = stream match{
+      case Cons(_,t) => t()
+      case _ => Empty()
+    }
   }
 
   import Stream._
