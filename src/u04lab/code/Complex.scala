@@ -26,9 +26,9 @@ object Complex {
 }
 
 object ComplexWithCase{
-  def apply(re:Double, im: Double): Complex = new ComplexWithCaseImpl(re,im)
+  def apply(re:Double, im: Double): Complex = new ComplexWithCaseImpl(re, im)
 
-  case class ComplexWithCaseImpl(re: Double, im: Double) extends Complex{
+  private case class ComplexWithCaseImpl(re: Double, im: Double) extends Complex{
     override def +(c: Complex): Complex = {
       ComplexWithCase(re + c.re, im + c.im)
     }

@@ -1,8 +1,8 @@
 package u04lab.code
 
 import Lists._
-import u04lab.code.Lists.List.Cons // import custom List type (not the one in Scala stdlib)
-
+import u04lab.code.Lists.List.{Cons, append, map}
+import u04lab.code.Lists._
 trait Student {
   def name: String
   def year: Int
@@ -17,11 +17,32 @@ trait Course {
 }
 
 object Student {
-  def apply(name: String, year: Int = 2017): Student = ???
+  def apply(name: String, year: Int = 2017): Student = StudentImpl(name, year)
+
+  case class StudentImpl(name: String, year: Int) extends Student {
+
+    assert(name != null && year != null)
+
+    private var courses_ = List.nil[Course]
+
+    override def enrolling(course: Course): Unit = {
+      courses_ = List.append(List.Cons(course, List.nil), courses_)
+    }
+
+    override def courses: List[String] = List.map(courses_)(Course => Course.name)
+
+    private def teachers: List[String] = List.map(courses_)(Course => Course.teacher)
+
+    override def hasTeacher(teacher: String): Boolean = List.contains(teachers)(teacher)
+  }
+
 }
 
 object Course {
-  def apply(name: String, teacher: String): Course = ???
+  def apply(name: String, teacher: String): Course = CourseImpl(name, teacher)
+
+  case class CourseImpl(name: String, teacher: String) extends Course
+
 }
 
 object Try extends App {
@@ -38,6 +59,7 @@ object Try extends App {
   s3.enrolling(cPCD)
   s3.enrolling(cSDR)
   println(s1.courses, s2.courses, s3.courses) // (Cons(PCD,Cons(PPS,Nil())),Cons(PPS,Nil()),Cons(SDR,Cons(PCD,Cons(PPS,Nil()))))
+                                              // (Cons(PCD,Cons(PPS,Nil())),Cons(PPS,Nil()),Cons(SDR,Cons(PCD,Cons(PPS,Nil()))))
   println(s1.hasTeacher("Ricci")) // true
 }
 
