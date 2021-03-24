@@ -3,6 +3,7 @@ package u04lab.code
 import Optionals._
 import Lists._
 import Streams._
+import u04lab.code.Optionals.Option.None
 
 import scala.util.Random
 
@@ -18,7 +19,7 @@ trait PowerIteratorsFactory {
 
   def incremental(start: Int, successive: Int => Int): PowerIterator[Int]
 
-  def fromList[A](list: List[A])
+  def fromList[A](list: List[A]): PowerIterator[A]
 
   def randomBooleans(size: Int): PowerIterator[Boolean]
 }
@@ -38,8 +39,8 @@ class PowerIteratorsFactoryImpl extends PowerIteratorsFactory {
           stream = Stream.tail(stream)
           next
         }
+        case Option.None() => next
       }
-      next
     }
 
     override def allSoFar(): List[A] = list
@@ -53,7 +54,7 @@ class PowerIteratorsFactoryImpl extends PowerIteratorsFactory {
   override def incremental(start: Int, successive: Int => Int): PowerIterator[Int] =
     PowerIteratorImpl(Stream.iterate(start)(successive))
 
-  override def fromList[A](list: List[A]): Unit = PowerIteratorImpl(Stream.fromList(list))
+  override def fromList[A](list: List[A]): PowerIterator[A] = PowerIteratorImpl(Stream.fromList(list))
 
   override def randomBooleans(size: Int): PowerIterator[Boolean] = PowerIteratorImpl(Stream.take(Stream.generate(Random.nextBoolean))(size))
 }

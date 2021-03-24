@@ -23,4 +23,37 @@ class PowerIteratorsTest {
     }
     assertEquals(Option.of(33), pi.next()); // sono arrivato a 33
   }
+
+  @Test
+  def testRandomBooleans(): Unit ={
+    val pi = factory.randomBooleans(5);
+    val b1 = pi.next(); //valori booleani random
+    val b2 = pi.next();
+    val b3 = pi.next();
+    val b4 = pi.next();
+    val b5 = pi.next();
+    val b6 = pi.next(); //sarà un optional vuoto
+    println(b1, b2, b3, b4, b5, b6)
+  }
+
+  @Test
+  def fromList(): Unit ={
+    val list = Cons(1, Cons(2, Cons(3, Cons(4, Nil()))))
+    val pi = factory.fromList(list)
+    assertEquals(Option.of(1), pi.next())
+    assertEquals(Option.of(2), pi.next())
+    assertEquals(Option.of(3), pi.next())
+    assertEquals(Option.of(4), pi.next())
+  }
+
+  @Test
+  def reversed(): Unit ={
+    val pi = factory.incremental(1, _ + 1)
+    assertEquals(Option.of(1), pi.next())
+    assertEquals(Option.of(2), pi.next())
+    val piReverse = pi.reversed()
+    assertEquals(Option.of(2), piReverse.next())
+    assertEquals(Option.of(1), piReverse.next())
+  }
 }
+
