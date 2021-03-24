@@ -24,6 +24,7 @@ trait PowerIteratorsFactory {
   def randomBooleans(size: Int): PowerIterator[Boolean]
 }
 
+
 class PowerIteratorsFactoryImpl extends PowerIteratorsFactory {
 
   private case class PowerIteratorImpl[A](private var stream: Stream[A]) extends PowerIterator[A] {
@@ -57,4 +58,9 @@ class PowerIteratorsFactoryImpl extends PowerIteratorsFactory {
   override def fromList[A](list: List[A]): PowerIterator[A] = PowerIteratorImpl(Stream.fromList(list))
 
   override def randomBooleans(size: Int): PowerIterator[Boolean] = PowerIteratorImpl(Stream.take(Stream.generate(Random.nextBoolean))(size))
+}
+
+
+object PowerIteratorsFactory{
+
 }

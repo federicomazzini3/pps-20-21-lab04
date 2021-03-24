@@ -89,6 +89,11 @@ object Lists extends App {
       case Cons(_, t) => contains(t)(p)
       case _ => false
     }
+
+    def fromSeq[A](seq: Seq[A]): List[A] = seq match{
+      case Seq(h, t @_*) => Cons(h, fromSeq(t))
+      case _ => Nil()
+    }
   }
 
   // Note "List." qualification

@@ -6,7 +6,7 @@ import u04lab.code.Lists._
 trait Student {
   def name: String
   def year: Int
-  def enrolling(course: Course): Unit // the student participates to a Course
+  def enrolling(course: Course*): Unit // the student participates to a Course
   def courses: List[String] // names of course the student participates to
   def hasTeacher(teacher: String): Boolean // is the student participating to a course of this teacher?
 }
@@ -16,17 +16,23 @@ trait Course {
   def teacher: String
 }
 
+/*
+ * factory hiding implementation
+ * l'implementazione di student è nascosta dal companion object student
+ * all'interno del metodo apply vado a istanziare StudentImpl
+ * inserirlo nel metodo apply permette di non dover chiamare il nome del metodo
+ */
 object Student {
   def apply(name: String, year: Int = 2017): Student = StudentImpl(name, year)
 
-  case class StudentImpl(name: String, year: Int) extends Student {
+  private case class StudentImpl(name: String, year: Int) extends Student {
 
     assert(name != null && year != null)
 
     private var courses_ = List.nil[Course]
 
-    override def enrolling(course: Course): Unit = {
-      courses_ = List.append(List.Cons(course, List.nil), courses_)
+    override def enrolling(course: Course*): Unit = {
+      courses_ = List.append(List.fromSeq(course), courses_)
     }
 
     override def courses: List[String] = List.map(courses_)(Course => Course.name)
@@ -45,6 +51,8 @@ object Course {
 
 }
 
+
+
 object Try extends App {
   val cPPS = Course("PPS","Viroli")
   val cPCD = Course("PCD","Ricci")
@@ -52,15 +60,13 @@ object Try extends App {
   val s1 = Student("mario",2015)
   val s2 = Student("gino",2016)
   val s3 = Student("rino") //defaults to 2017
-  s1.enrolling(cPPS)
-  s1.enrolling(cPCD)
+  s1.enrolling(cPPS,cPCD)
   s2.enrolling(cPPS)
-  s3.enrolling(cPPS)
-  s3.enrolling(cPCD)
-  s3.enrolling(cSDR)
+  s3.enrolling(cPPS, cPCD, cSDR)
   println(s1.courses, s2.courses, s3.courses) // (Cons(PCD,Cons(PPS,Nil())),Cons(PPS,Nil()),Cons(SDR,Cons(PCD,Cons(PPS,Nil()))))
                                               // (Cons(PCD,Cons(PPS,Nil())),Cons(PPS,Nil()),Cons(SDR,Cons(PCD,Cons(PPS,Nil()))))
   println(s1.hasTeacher("Ricci")) // true
+
 }
 
 /** Hints:
