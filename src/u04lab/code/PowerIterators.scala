@@ -4,6 +4,7 @@ import Optionals._
 import Lists._
 import Streams._
 import u04lab.code.Optionals.Option.None
+import u04lab.code.PowerIterator.PowerIteratorImpl
 
 import scala.util.Random
 
@@ -24,11 +25,14 @@ trait PowerIteratorsFactory {
   def randomBooleans(size: Int): PowerIterator[Boolean]
 }
 
+/*
+ * companion object per l'implementazione di PowerIterator
+ */
+object PowerIterator{
 
-class PowerIteratorsFactoryImpl extends PowerIteratorsFactory {
+  def apply[A](stream: Stream[A]): PowerIterator[A] = PowerIteratorImpl(stream)
 
-  private case class PowerIteratorImpl[A](private var stream: Stream[A]) extends PowerIterator[A] {
-
+  private case class PowerIteratorImpl[A](private var stream:Stream[A]) extends PowerIterator[A]{
     private var list: List[A] = List.Nil()
 
     override def next(): Option[A] = {
@@ -51,16 +55,17 @@ class PowerIteratorsFactoryImpl extends PowerIteratorsFactory {
       new PowerIteratorImpl[A](Stream.fromList(reverseList))
     }
   }
-
-  override def incremental(start: Int, successive: Int => Int): PowerIterator[Int] =
-    PowerIteratorImpl(Stream.iterate(start)(successive))
-
-  override def fromList[A](list: List[A]): PowerIterator[A] = PowerIteratorImpl(Stream.fromList(list))
-
-  override def randomBooleans(size: Int): PowerIterator[Boolean] = PowerIteratorImpl(Stream.take(Stream.generate(Random.nextBoolean))(size))
 }
 
+/*
+ * implementazione PowerIteratorFactory come class 
+ */
+class PowerIteratorsFactoryImpl extends PowerIteratorsFactory {
 
-object PowerIteratorsFactory{
+  override def incremental(start: Int, successive: Int => Int): PowerIterator[Int] =
+    PowerIterator(Stream.iterate(start)(successive))
 
+  override def fromList[A](list: List[A]): PowerIterator[A] = PowerIterator(Stream.fromList(list))
+
+  override def randomBooleans(size: Int): PowerIterator[Boolean] = PowerIterator(Stream.take(Stream.generate(Random.nextBoolean))(size))
 }
